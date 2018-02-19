@@ -6,14 +6,21 @@
 
 	public class Extractor
 	{
-		public static IEnumerable<string> GetFilesPaths(string folder, string[] extensions) {
-			if (!Directory.Exists(folder)) {
-				return Enumerable.Empty<string>();
-			}
-			DirectoryInfo directory = new DirectoryInfo(folder);
-			IEnumerable<FileInfo> files = extensions.SelectMany(ext => directory.EnumerateFiles(ext, SearchOption.AllDirectories));
+		public static IEnumerable<string> GetFilesPaths(string folder, string[] extensions)
+		{
+		    IEnumerable<FileInfo> files = GetFiles(folder, extensions);
 			IEnumerable<string>  filesPaths = files.Select(f => f.FullName.Replace('\\', '/'));
 			return filesPaths;
 		}
-	}
+
+	    public static IEnumerable<FileInfo> GetFiles(string folder, string[] extensions)
+	    {
+	        if(!Directory.Exists(folder))
+	        {
+	            return Enumerable.Empty<FileInfo>();
+	        }
+	        DirectoryInfo directory = new DirectoryInfo(folder);
+	        return extensions.SelectMany(ext => directory.EnumerateFiles(ext, SearchOption.AllDirectories));
+	    }
+    }
 }
