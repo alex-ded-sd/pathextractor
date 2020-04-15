@@ -6,7 +6,7 @@
 
     public class Translit
     {
-        private static Dictionary<string, string> _charMap = new Dictionary<string, string>
+        private static readonly Dictionary<string, string> _charMap = new Dictionary<string, string>
         {
             {"а", "a"},
             {"б", "b"},
@@ -14,6 +14,7 @@
             {"г", "g"},
             {"д", "d"},
             {"е", "e"},
+            {"є", "e"},//UKR
             {"ё", "yo"},
             {"ж", "zh"},
             {"з", "z"},
@@ -77,26 +78,31 @@
             {"Ю", "Yu"},
             {"Я", "Ya"},
             {" ", "_" },
+            {",", "_"},
             {"(", "_" },
-            {")", "_" }
+            {")", "_" },
+            {"&", "_"}
         };
         public static void TranslitFileNames(IEnumerable<FileInfo> files)
         {
             foreach (FileInfo file in files)
             {
-                string oldFileName = file.FullName;
-                string newFileName = oldFileName;
-                foreach (KeyValuePair<string, string> keyValuePair in _charMap)
-                {
-                    newFileName = newFileName.Replace(keyValuePair.Key, keyValuePair.Value);
-                }
-                string directory = Path.GetDirectoryName(newFileName);
-                if (!Directory.Exists(directory))
-                {
-                    Directory.CreateDirectory(directory ?? throw new InvalidOperationException());
-                }
-                File.Move(oldFileName, newFileName);
+                var translitedFile = TranslitFile(file.Name);
+                var newFullFileName = Path.Combine(file.DirectoryName ?? throw new InvalidOperationException("Кривая папка с музыкой"),
+                    translitedFile);
+                File.Move(file.FullName, newFullFileName);
             }
+        }
+
+        private static string TranslitFile(string fileName)
+        {
+            var newFileName = fileName;
+            foreach (KeyValuePair<string, string> keyValuePair in _charMap)
+            {
+                newFileName = newFileName.Replace(keyValuePair.Key, keyValuePair.Value);
+            }
+
+            return newFileName;
         }
     }
 }
