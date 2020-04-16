@@ -81,7 +81,8 @@
             {",", "_"},
             {"(", "_" },
             {")", "_" },
-            {"&", "_"}
+            {"&", "_"},
+            {"#", "_"}
         };
         public static void TranslitFileNames(IEnumerable<FileInfo> files)
         {
